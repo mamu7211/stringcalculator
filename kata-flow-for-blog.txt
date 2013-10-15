@@ -1,0 +1,86 @@
+Step 5
+======
+
+Test's green, go to refactor. We do have duplication - creation of variable 'calc' within the test, so remove it by putting it into a test setup statement. Rerun the tests again. All green, now check this into your dev branch of your scm.
+
+>> public class StringCalculatorTests {
+
+	private StringCalculator calc;
+
+	@Before
+	public void setUp() {
+		calc = new StringCalculator();
+	}
+
+	@Test
+	public void foo() {
+		assertEquals(Integer.valueOf(0), calc.add(""));
+	}
+
+	@Test
+	public void bar() {
+		assertEquals(Integer.valueOf(1), calc.add("1"));
+	}
+}
+
+Step 4
+======
+
+Fixing the failed test results in one not straightforward solution. 
+
+>> public class StringCalculator {
+	public Integer add(String string) {
+		return StringUtils.isBlank(string)?0:1;
+	}
+}
+
+Step 3
+======
+
+Add a next test. For example, I'll choose one, because of checking for a returned 0 already, I'll force StringCalculator to return something other.
+
+>>public class StringCalculatorTests {
+
+	@Test
+	public void foo() {
+		StringCalculator calc = new StringCalculator();
+		assertEquals(Integer.valueOf(0), calc.add(""));
+	}
+	
+	@Test
+	public void bar() {
+		StringCalculator calc = new StringCalculator();
+		assertEquals(Integer.valueOf(1),calc.add("1"));
+	}
+}
+
+Step 2
+======
+
+Fix the failing test. E.g. choosing the simplest method would be Integer.parse. Returning an int 0 will get it boxed and returns an Integer. Having a green test, I'll check if there's something worth refactoring - remember 'refactoring' means change the code structure, without changing the functionality. You only can do this confidently having all or at least the most relevant parts of your codes covered by tests.
+
+>> public class StringCalculator {
+	public Integer add(String string) {
+		return 0;
+	}
+}
+
+Step 1
+======
+
+Straightforward, one test, returning <null>.
+
+>> public class StringCalculatorTests {
+
+	@Test
+	public void foo() {
+		StringCalculator calc = new StringCalculator();
+		assertEquals(Integer.valueOf(0), calc.add(""));
+	}
+}
+
+>> public class StringCalculator {
+	public Integer add(String string) {
+		return null;
+	}
+}
