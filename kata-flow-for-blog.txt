@@ -1,3 +1,178 @@
+Step 18
+=======
+
+Add another Test, using big numbers. Note that if we use even bigger numbers, we run into overflow problems. Let's assume, we don't care about results larger than 2,147,483,647 - if we did, we should add some more tests using big numbers and more multipliers, build in some exception handling, etc.
+
+	@Test
+	public void whenAdding12345678Times9999tShouldReturn3060() {
+		assertEquals(Integer.valueOf(12345678*9999), calc.add(generateNumbers(12345678,9999)));
+	}
+
+Step 17
+=======
+
+Add another test for calculating the sum of multiple numbers. Green? Perfect!
+
+>> @Test
+	public void whenAdding20Time153ItShouldReturn3060() {
+		assertEquals(Integer.valueOf(3060), calc.add(generateNumbers(20,153)));
+	}
+
+Step 16
+=======
+
+We end up with another thing to test, or not? That's a question to think about. Let's add a test, then run it. Should be green.
+
+>> @Test
+	public void testGenerateNumbersHelperMethod() {
+		String numbers = generateNumbers(3, 15);
+		assertEquals("3,3,3,3,3,3,3,3,3,3,3,3,3,3,3", numbers);
+	}
+
+Step 15
+=======
+
+Let's add some more tests, but before that, extract the number generation - which includes the StringBuilder, the loop, etc.
+
+>> private String generateNumbers(int number, int repetitions) {
+		StringBuilder sb = new StringBuilder();
+		String delim = "";
+		for (int currentNumber = 0; currentNumber < repetitions; currentNumber++) {
+			sb.append(delim);
+			sb.append(number);
+			delim = ",";
+		}
+		return sb.toString();
+	}
+
+Step 14
+=======
+
+Let's add some test adding more numbers, for example 15 times the number 1, assert it equals 15. Run the test, it should work.
+
+>>	@Test
+	public void whenAddingSeveralNumbersItShouldReturnTheSum() {
+		StringBuilder sb = new StringBuilder();
+		String delim = "";
+		for (int i = 0; i < 15; i++) {
+			sb.append(delim);
+			sb.append(1);
+			delim = ",";
+		}
+		assertEquals(Integer.valueOf(15), calc.add(sb.toString()));
+	}
+
+Step 13
+=======
+
+Extract a method containing the loop. Rerun the test.
+
+>>	public Integer add(String numbers) {
+		if (StringUtils.isEmpty(numbers)) {
+			return 0;
+		}
+		return splitAndAddNumbers(numbers);
+	}
+
+	private Integer splitAndAddNumbers(String numbers) {
+		int sum = 0;
+		for (String number : StringUtils.split(numbers, ',')) {
+			sum += Integer.parseInt(number);
+		}
+		return sum;
+	}
+
+Step 12
+=======
+
+Tests failed, so implement splitting the numbers and add them in a loop. Rerun the test. 
+
+>>	public Integer add(String numbers) {
+		if (StringUtils.isEmpty(numbers)) {
+			return 0;
+		}
+		int sum = 0;
+		String splittedNumbers = StringUtils.split(numbers, ',') 
+		for (String number : splittedNumbers) {
+			sum += Integer.parseInt(number);
+		}
+		return sum;
+	}
+
+Step 11
+=======
+
+The next test will be the real stuff. Adding two numbers, for now just separated by a colon. Run the tests, they fail with an IllegalNumberFormatException. 
+
+>>	@Test
+	public void whenAddingTwoToThreeAddShouldReturnFive() {
+		assertEquals(Integer.valueOf(5), calc.add("2,3"));
+	}
+
+
+Step 10
+=======
+
+All test are green, now do some refactoring. I've changed the parameters name from 'string' to 'numbers'. Thought about removing assertEquals(Integer.valueOf(...), ...) with something more readable, but skipped that for now. Maybe, I should move to some other syntax, a nice fellow told me about the more fluid API of Junit, kind of assertThat(x).is(y) - not sure about the syntax, the dependencies (?) and not having a wifi right now, I'll dont mess around with this for now.
+
+>> public class StringCalculator {
+
+	public Integer add(String numbers) {
+		if (StringUtils.isEmpty(numbers)) {
+			return 0;
+		}
+		return Integer.parseInt(numbers);
+	}
+}
+
+Step 9
+======
+
+We fixed the new test, but we broke an old one. Let's do the simplest thing again and rerun the tests.
+
+>> public class StringCalculator {
+	public Integer add(String string) {
+		if (StringUtils.isEmpty(string)) {
+			return 0;
+		}
+		return Integer.parseInt(string);
+	}
+}
+
+Step 8
+======
+
+Ok, now we're not getting around parsing the numbers. Fix the test by using Integer.parseInt(string) and rerun the tests.
+
+>> public class StringCalculator {
+
+	public Integer add(String string) {
+		return Integer.parseInt(string);
+	}
+}
+
+Step 7
+======
+
+Let's move on with some other test, try to break your strange logic of figuring out how to return 0 or 1. Rerun the test, it should break your implementation.
+
+>> 	@Test
+	public void whenAddingZeroAddShouldreturnZero() {
+		assertEquals(Integer.valueOf(0), calc.add("0"));
+	}
+
+Step 6
+======
+
+If everything's green, rename the tests. I didn't take care of the names right now, they didn't matter to me as long as I'm thinking about functionality - wich is wrong. Let's rename the tests right now.
+
+>>	@Test
+	public void whenAddingEmptyStringAddShouldReturnZero() { /* ... */ }
+	
+	@Test
+	public void whenAddingOneAddShouldReturnOne() { /* ... */ }
+	
+
 Step 5
 ======
 
