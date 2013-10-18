@@ -26,7 +26,10 @@ Create a simple String calculator with a method int Add(string numbers)
 Calling Add with a negative number will throw an exception “negatives not allowed” - and the negative that was passed.if there are multiple negatives, show all of them in the exception message
 stop here if you are a beginner. Continue if you can finish the steps so far in less than 30 minutes.
 Numbers bigger than 1000 should be ignored, so adding 2 + 1001  = 2
-Delimiters can be of any length with the following format:  “//[delimiter]\n” for example: “//[***]\n1***2***3” should return 6
-Allow multiple delimiters like this:  “//[delim1][delim2]\n” for example “//[*][%]\n1*2%3” should return 6.
-make sure you can also handle multiple delimiters with length longer than one char
- 
+Delimiters can be of any length with the following format:  “//[delimiter]\n” for example: “//[\*\*\*]\n1\*\*\*2\*\*\*3” should return 6
+Allow multiple delimiters like this:  “//[delim1][delim2]\n” for example “//[\*][%]\n1*2%3” should return 6. Make sure you can also handle multiple delimiters with length longer than one char
+
+How I did It
+------------
+
+See http://seventy2eleven.de/string-calculator-kata/
