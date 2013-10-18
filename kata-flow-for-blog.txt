@@ -1,3 +1,162 @@
+Step 31
+=======
+
+Read the 'spec' again, “1,\n” is not ok, “1\n2,3” is ok. Let's test this. A little bit late, but anyway, it must be tested.
+  
+Step 30
+=======
+
+Do a new test. Something weird. All our test still runs on green. We've got 15 of them. Confidence!? I'm sure I've missed some cornercases - where's my Co-Pilot? 
+
+>> @Test
+	public void whenAddingSomeStringWithSeveralNewlinesBeforeANumberItShouldBeCalculated(){
+		assertEquals(Integer.valueOf(10),calc.add("\n\n\n   \n \n\n1\n\n2\n \n\n3,4"));
+	}
+
+Step 29
+=======
+
+Think again, is there something you don't like? We could extract "sum" to a field for further operations and rename it to calculationResult. But that's a clear case of YAGNI, so I'll stopped and reverted my changes.
+
+Step 28
+=======
+
+Extract the ?: expression into a method, test again, refactor again, test again. If it looks good, move on.
+
+>>	private Integer splitAndAddNumbers(String numbers) {
+		int sum = 0;
+		for (String number : StringUtils.split(numbers, ',')) {
+			sum += parseNumber(number);
+		}
+		return sum;
+	}
+
+	private int parseNumber(String number) {
+		if (number.trim().length() == 0) {
+			return 0;
+		}
+		return Integer.parseInt(number.trim());
+	}
+
+Step 27
+=======
+
+Ok, if we add up 0 when having an empty string, we should be fine. No tests broken, but our code needs refactoring.
+
+>>	private Integer splitAndAddNumbers(String numbers) {
+		int sum = 0;
+		for (String number : StringUtils.split(numbers, ',')) {
+			sum += number.trim().length() == 0 ? 0 : Integer.parseInt(number
+					.trim());
+		}
+		return sum;
+	}
+Step 26
+=======
+
+Ok, what to mess up next. Maybe something like "4, \n3"?
+
+>>	@Test
+	public void whenAddingSomeStringWithSpacesAndANewlineAfterwardsItShouldBeCalculated(){
+		assertEquals(Integer.valueOf(7), calc.add("3, \n4"));
+	}
+
+Step 25
+=======
+
+NumberFormatExeption for input String " 4" - sound's great. We need to trim the number before parsing.
+
+>>	private Integer splitAndAddNumbers(String numbers) {
+		int sum = 0;
+		for (String number : StringUtils.split(numbers, ',')) {
+			sum += Integer.parseInt(number.trim());
+		}
+		return sum;
+	}
+
+Step 24
+=======
+
+With this knowledge, let's crash the test. Let's crash the parsing of numbers.
+
+>>	@Test
+	public void whenAddingSomeStringWithSpacesItShouldBeCalculated(){
+		assertEquals(Integer.valueOf(12), calc.add("8, 4"));
+	}
+
+Step 23
+=======
+
+It's strange, I thought splitting something like ",," - which would be the case when passsing a String like "\n\n" to our add() method, remember the removeNewLines() method? I'll wrote some tests to spike out the behaviour of Integer.parseInt() and StringUtils.split() to check what's going on. Causing this behaviour is StringUtils.split() which creates no entry in the resulting String array, if there's an empty String (="") returned.
+	
+>>	@Test
+	public void foo(){
+		assertEquals(0,Integer.parseInt(""));
+	}
+	
+	@Test
+	public void bar(){
+		assertEquals(2,StringUtils.split(",,",",").length);
+	}
+
+Step 22
+=======
+
+Let's mess around with newlines, then run the tests. They all pass. I'm surprised. Why? Look at Step 23.
+
+>> @Test
+	public void whenAddingAStringWithOneNewLineAtTheendItShouldBeCalculated() {
+		assertEquals(Integer.valueOf(27), calc.add("14,13\n"));
+	}
+
+	@Test
+	public void whenAddingAStringWithOneNewLineAtTheBeginningItShouldBeCalculated() {
+		assertEquals(Integer.valueOf(27), calc.add("\n14,13"));
+	}
+
+	@Test
+	public void whenAddingAStringWithSeveralLinesAtItShouldBeCalculated() {
+		assertEquals(Integer.valueOf(27), calc.add("8\n6\n4\n9"));
+	}
+
+Step 21
+=======
+
+Refactor!
+
+>> 	public Integer add(String numbers) {
+		if (StringUtils.isEmpty(numbers)) {
+			return 0;
+		}
+		return splitAndAddNumbers(removeNewLines(numbers));
+	}
+
+	private String removeNewLines(String numbers) {
+		return numbers.replace("\n", ",");
+	}
+
+Step 20
+=======
+
+Correct your add() method.
+
+>> public Integer add(String numbers) {
+		if (StringUtils.isEmpty(numbers)) {
+			return 0;
+		}
+		return splitAndAddNumbers(numbers.replace("\n", ","));
+	}
+
+Step 19
+======= 
+
+Let's move to newlines. Create following test, it'll fail.
+
+>>	@Test
+	public void whenAddingAStringWithOneNewLineItShouldBeCalculated() {
+		assertEquals(Integer.valueOf(27), calc.add("14\n13"));
+	}
+
 Step 18
 =======
 
